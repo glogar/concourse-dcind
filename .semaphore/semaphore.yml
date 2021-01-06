@@ -12,5 +12,18 @@ blocks:
           commands:
             - checkout
             - docker build -t concourse-dcind .
+            - 'docker run --privileged concourse-dcind:latest'
+  - name: Push Docker image to registry
+    task:
+      jobs:
+        - name: Docker Hub
+          commands:
+            - checkout
+            - echo $DOCKER_PASSWORD | docker login --username "$DOCKER_USERNAME" --password-stdin
             - docker images
-            - docker run --privileged concourse-dcind
+            - 'docker tag concourse-dcind:latest "$DOCKER_USERNAME"/concourse-dcind:latest'
+            - 'docker push "$DOCKER_USERNAME"/concourse-dcind:latest'
+            - 'docker pull "$DOCKER_USERNAME"/concourse-dcind:latest'
+            - docker images
+    skip:
+      when: branch != 'master'
