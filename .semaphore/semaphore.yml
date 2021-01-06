@@ -11,8 +11,9 @@ blocks:
         - name: Build & Run
           commands:
             - checkout
-            - docker build -t concourse-dcind .
-            - 'docker run --privileged concourse-dcind:latest'
+            - 'docker build -t concourse-dcind:$SEMAPHORE_WORKFLOW_ID .'
+            - docker images
+            - 'docker run --privileged concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
   - name: Push Docker image to registry
     task:
       jobs:
@@ -21,9 +22,9 @@ blocks:
             - checkout
             - echo $DOCKER_PASSWORD | docker login --username "$DOCKER_USERNAME" --password-stdin
             - docker images
-            - 'docker tag concourse-dcind:latest "$DOCKER_USERNAME"/concourse-dcind:latest'
-            - 'docker push "$DOCKER_USERNAME"/concourse-dcind:latest'
-            - 'docker pull "$DOCKER_USERNAME"/concourse-dcind:latest'
+            - 'docker tag concourse-dcind:$SEMAPHORE_WORKFLOW_ID "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker push "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker pull "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
             - docker images
       secrets:
         - name: docker-hub
