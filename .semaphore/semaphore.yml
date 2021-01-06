@@ -25,5 +25,7 @@ blocks:
             - 'docker push "$DOCKER_USERNAME"/concourse-dcind:latest'
             - 'docker pull "$DOCKER_USERNAME"/concourse-dcind:latest'
             - docker images
+      secrets:
+        - name: docker-hub
     skip:
       when: branch != 'master'
