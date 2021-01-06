@@ -1,16 +1,13 @@
 version: v1.0
-name: Building Docker images
+name: Initial Pipeline
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
-
 blocks:
-  - name: Build Container
+  - name: 'Block #1'
     task:
       jobs:
-      - name: Docker Hub
-        commands:
-          - checkout
-          - docker build -t hello:v1 .
-          - docker run hello:v1
+        - name: 'Job #1'
+          commands:
+            - checkout
