@@ -11,5 +11,6 @@ blocks:
         - name: Build & Run
           commands:
             - checkout
-            - 'docker build -t hello:v1 .'
-            - 'docker run --privileged hello:v1'
+            - docker build -t concourse-dcind .
+            - docker images
+            - docker run --privileged concourse-dcind
