@@ -25,7 +25,7 @@ RUN apk --update --no-cache add \
     apk upgrade && \
     curl -fL "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/x86_64/docker-${DOCKER_VERSION}.tgz" | tar zx && \
     mv /docker/* /bin/ && chmod +x /bin/docker* && \
-    python3 -m pip install --upgrade pip
+    python3 -m pip install --upgrade pip && \
     pip3 install docker-compose==${DOCKER_COMPOSE_VERSION} && \
     pip3 install docker-squash==${DOCKER_SQUASH} && \
     rm -rf /var/cache/apk/* && \
