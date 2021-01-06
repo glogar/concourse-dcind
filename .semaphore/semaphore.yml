@@ -8,8 +8,8 @@ blocks:
   - name: Build Container
     task:
       jobs:
-        - name: Docker Hub
+        - name: Build & Run
           commands:
             - checkout
-            - 'docker build -t hello:v1 .'
-            - 'docker run hello:v1'
+            - 'docker build --privileged -t hello:v1 .'
+            - 'docker run --privileged hello:v1'
