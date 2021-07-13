@@ -11,11 +11,11 @@ blocks:
         - name: Build & Run
           commands:
             - checkout
-            - 'docker build -t concourse-dcind:$SEMAPHORE_WORKFLOW_ID .'
+            - 'docker build -t concourse-dcind:test .'
             - docker images
-            - 'docker run --privileged concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker run --privileged concourse-dcind:test'
     skip:
-      when: branch = 'master'
+      when: "tag =~ '.*'"
     dependencies: []
   - name: Release Docker image
     task:
@@ -24,15 +24,15 @@ blocks:
           commands:
             - checkout
             - echo $DOCKER_PASSWORD | docker login --username "$DOCKER_USERNAME" --password-stdin
-            - 'docker build -t concourse-dcind:$SEMAPHORE_WORKFLOW_ID .'
+            - 'docker build -t concourse-dcind:$SEMAPHORE_GIT_TAG_NAME .'
             - docker images
-            - 'docker run --privileged concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
-            - 'docker tag concourse-dcind:$SEMAPHORE_WORKFLOW_ID "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
-            - 'docker push "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
-            - 'docker pull "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker run --privileged concourse-dcind:$SEMAPHORE_GIT_TAG_NAME'
+            - 'docker tag concourse-dcind:$SEMAPHORE_GIT_TAG_NAME "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_GIT_TAG_NAME'
+            - 'docker push "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_GIT_TAG_NAME'
+            - 'docker pull "$DOCKER_USERNAME"/concourse-dcind:$SEMAPHORE_GIT_TAG_NAME'
             - docker images
       secrets:
         - name: docker-hub
-    skip:
-      when: branch != 'master'
+    run:
+      when: "tag =~ '.*'"
     dependencies: []
