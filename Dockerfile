@@ -11,37 +11,41 @@ ENV DOCKER_CHANNEL=stable \
     DOCKER_SQUASH=1.0.8
 
 # Install Docker, Docker Compose, Docker Squash
-RUN apk update \
-    && apk upgrade \
-    && apk --update --no-cache add \
-        bash \
-        ca-certificates \
-        cargo \
-        curl \
-        device-mapper \
-        gcc \
-        git \
-        iptables \
-        less \
-        libc-dev \
-        libffi-dev \
-        libressl-dev \
-        make \
-        musl-dev \
-        openssh \
-        openssl-dev \
-        py3-pip \
-        python3 \
-        python3-dev \
-        util-linux \
-    && curl -fL "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/x86_64/docker-${DOCKER_VERSION}.tgz" | tar zx \
-    && mv /docker/* /bin/ && chmod +x /bin/docker* \
-    && python3 -m pip install --upgrade pip \
-    && pip3 install docker-compose==${DOCKER_COMPOSE_VERSION} \
-    && pip3 install docker-squash==${DOCKER_SQUASH} \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /root/.cache
+RUN set -ex \
+        && apk update \
+        && apk upgrade \
+        && apk add --no-cache --virtual .build-deps \
+            ca-certificates \
+            cargo \
+            curl \
+            device-mapper \
+            gcc \
+            git \
+            iptables \
+            less \
+            libc-dev \
+            libffi-dev \
+            libressl-dev \
+            make \
+            musl-dev \
+            openssh \
+            openssl-dev \
+            py3-pip \
+            python3 \
+            python3-dev \
+            util-linux \
+        && apk add --no-cache --virtual .run-deps \
+            bash \
+        && curl -fL "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/x86_64/docker-${DOCKER_VERSION}.tgz" | tar zx \
+        && mv /docker/* /bin/ \
+        && chmod +x /bin/docker* \
+        && python3 -m pip install --upgrade pip \
+        && pip3 install --no-cache-dir docker-compose==${DOCKER_COMPOSE_VERSION} \
+        && pip3 install --no-cache-dir docker-squash==${DOCKER_SQUASH} \
+        && apk del .build-deps \
+        && rm -rf /var/lib/apt/lists/* \
+        && rm -rf /var/cache/apk/* \
+        && rm -rf /root/.cache
 
 COPY entrypoint.sh /bin/entrypoint.sh
 
